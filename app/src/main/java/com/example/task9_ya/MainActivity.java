@@ -32,12 +32,10 @@ public class MainActivity extends AppCompatActivity
 
     }
     @Override
-    public boolean onCreateOptionsMenu (Menu menu)
+    public boolean onCreateOptionsMenu(Menu menu)
     {
-
-        getMenuInflater () .inflate (R.menu.main,menu);
-
-        return super.onCreateOptionsMenu (menu);
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item)
@@ -55,55 +53,70 @@ public class MainActivity extends AppCompatActivity
             etNum2.setText("");
             tvResult.setText("");
         }
-        if(isValidInput())
+        else
         {
-            num1 = Double.parseDouble(str1);
-            num2 = Double.parseDouble(str2);
-
-            if (st.equals("+"))
+            if (!isValidInput())
             {
-
-                res = num1 + num2;
-
+                return true;
             }
-            else if (st.equals("-"))
+            else
             {
+                num1 = Double.parseDouble(str1);
+                num2 = Double.parseDouble(str2);
 
-                res = num1 - num2;
+                if (st.equals("+")) {
 
-            }
-            else if (st.equals("*"))
-            {
-                res = num1 * num2;
-            }
-            else if (st.equals("/"))
-            {
-                res = num1 / num2;
-            }
+                    res = num1 + num2;
 
+                } else if (st.equals("-")) {
+
+                    res = num1 - num2;
+
+                } else if (st.equals("*")) {
+                    res = num1 * num2;
+                } else if (st.equals("/"))
+                {
+                    if (num2 == 0)
+                    {
+                        tvResult.setText("dont do thattt");
+                        return true;
+                    }
+                    res = num1 / num2;
+                }
+            }
+            tvResult.setText(String.valueOf(formatNiceResult(res)));
         }
-        tvResult.setText(String.valueOf(res));
         return super.onOptionsItemSelected(item);
+    }
+    public String formatNiceResult(double num) {
+        if (num == 0)
+        {
+            return "0";
+        }
+        double absVal = Math.abs(num);
+        if (absVal >= 10000000 || absVal <= 0.001)
+        {
+            return String.format("%.3E", num);
+        }
+        else if (num == (long) num)
+        {
+            return String.format("%d", (long) num);
+        }
+        else
+        {
+            return String.format("%.3f", num);
+        }
     }
     public boolean isValidInput()
     {
         String str1 = etNum1.getText().toString();
         String str2 = etNum2.getText().toString();
+        if (str1.isEmpty() || str2.isEmpty())
+        {
+            return false;
+        }
 
-        if (str1.isEmpty())
-        {
-            return false;
-        }
-        if (str2.isEmpty())
-        {
-            return false;
-        }
-        try
-        {
-            Double.parseDouble(str1);
-            Double.parseDouble(str2);
-        }
-        catch (NumberFormatException e)
+        if (str1.equals(".") || str1.equals("-") || str2.equals(".") || str2.equals("-"))
         {
             return false;
         }
